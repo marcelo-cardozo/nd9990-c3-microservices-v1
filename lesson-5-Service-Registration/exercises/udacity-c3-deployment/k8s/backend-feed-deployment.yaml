@@ -12,7 +12,7 @@ spec:
         service: backend-feed
     spec:
       containers:
-      - image: scheele/udacity-restapi-feed
+      - image: marcecardozo/udacity-restapi-feed
         name: backend-feed
         imagePullPolicy: Always  
         resources:
@@ -28,46 +28,46 @@ spec:
             configMapKeyRef:
               name: env-config
               key: URL
-        - name: AWS_BUCKET
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: AWS_BUCKET
-        - name: AWS_PROFILE
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: AWS_PROFILE
-        - name: AWS_REGION
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: AWS_REGION
         - name: JWT_SECRET
           valueFrom:
-            configMapKeyRef:
-              name: env-config
+            secretKeyRef:
+              name: env-secret
               key: JWT_SECRET
-        - name: POSTGRESS_DB
+        - name: POSTGRESS_USERNAME
           valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRESS_DB
-        - name: POSTGRESS_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRESS_HOST
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRESS_USERNAME
         - name: POSTGRESS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: env-secret
               key: POSTGRESS_PASSWORD
-        - name: POSTGRESS_USERNAME
+        - name: POSTGRESS_DB
           valueFrom:
             secretKeyRef:
               name: env-secret
-              key: POSTGRESS_USERNAME      
+              key: POSTGRESS_DB
+        - name: POSTGRESS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRESS_HOST
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: AWS_REGION
+        - name: AWS_PROFILE
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: AWS_PROFILE
+        - name: AWS_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: AWS_BUCKET
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws/"
@@ -76,4 +76,4 @@ spec:
       volumes:
       - name: aws-secret
         secret:
-          secretName: aws-secret       
+          secretName: aws-secret
