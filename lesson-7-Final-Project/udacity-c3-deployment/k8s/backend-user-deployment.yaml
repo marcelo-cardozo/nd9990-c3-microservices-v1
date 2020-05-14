@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - image: marcecardozo/udacity-restapi-user
-        name: backend-user 
+        name: backend-user
         imagePullPolicy: Always  
         resources:
           requests:
@@ -21,38 +21,36 @@ spec:
             cpu: "250m"
           limits:
             memory: "1024Mi"
-            cpu: "500m"      
+            cpu: "500m"                  
         env:
         - name: URL
           valueFrom:
             configMapKeyRef:
               name: env-config
-              key: URL 
+              key: URL
         - name: JWT_SECRET
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: JWT_SECRET
-        - name: POSTGRESS_DB
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRESS_DB
-        - name: POSTGRESS_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRESS_HOST
-        - name: POSTGRESS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: env-secret
-              key: POSTGRESS_PASSWORD
+              key: JWT_SECRET
         - name: POSTGRESS_USERNAME
           valueFrom:
             secretKeyRef:
               name: env-secret
               key: POSTGRESS_USERNAME
+        - name: POSTGRESS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRESS_PASSWORD
+        - name: POSTGRESS_DB
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRESS_DB
+        - name: POSTGRESS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRESS_HOST
       restartPolicy: Always
-
-
