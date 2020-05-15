@@ -11,11 +11,30 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-  - chmod +x ./kubectl
-  - sudo mv ./kubectl /usr/local/bin/kubectl
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
 
 install:
-  - docker-compose -f lesson-4-Kubernetes/exercise/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker-compose -f lesson-4-Kubernetes/exercise/udacity-c3-deployment/docker/docker-compose-build.yaml push 
+  - docker-compose -f lesson-7-Final-Project/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel
+  - docker-compose -f lesson-7-Final-Project/udacity-c3-deployment/docker/docker-compose-build.yaml push 
+
+  - sed -i -e 's|ENV_POSTGRESS_USERNAME|'"${ENV_POSTGRESS_USERNAME}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+  - sed -i -e 's|ENV_POSTGRESS_PASSWORD|'"${ENV_POSTGRESS_PASSWORD}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+  - sed -i -e 's|ENV_POSTGRESS_DB|'"${ENV_POSTGRESS_DB}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+  - sed -i -e 's|ENV_POSTGRESS_HOST|'"${ENV_POSTGRESS_HOST}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+  - sed -i -e 's|ENV_AWS_REGION|'"${ENV_AWS_REGION}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+  - sed -i -e 's|ENV_AWS_PROFILE|'"${ENV_AWS_PROFILE}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+  - sed -i -e 's|ENV_AWS_BUCKET|'"${ENV_AWS_BUCKET}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+  - sed -i -e 's|ENV_JWT_SECRET|'"${ENV_JWT_SECRET}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/env-secret.yaml
+
+  - sed -i -e 's|ENV_AWS_CREDENTIALS|'"${ENV_AWS_CREDENTIALS}"'|g' lesson-7-Final-Project/udacity-c3-deployment/k8s/aws-secret.yaml
+
+  - sed -i -e 's|ENV_KUBE_CA_CERT|'"${ENV_KUBE_CA_CERT}"'|g' lesson-7-Final-Project/udacity-c3-deployment/kube/kubeconfig.yaml
+  - sed -i -e 's|ENV_KUBE_ENDPOINT|'"${ENV_KUBE_ENDPOINT}"'|g' lesson-7-Final-Project/udacity-c3-deployment/kube/kubeconfig.yaml
+  - sed -i -e 's|ENV_CLUSTER_NAME|'"${ENV_CLUSTER_NAME}"'|g' lesson-7-Final-Project/udacity-c3-deployment/kube/kubeconfig.yaml
+  - sed -i -e 's|ENV_CLUSTER_REGION|'"${ENV_CLUSTER_REGION}"'|g' lesson-7-Final-Project/udacity-c3-deployment/kube/kubeconfig.yaml
+
+  - docker run -v "./lesson-7-Final-Project/udacity-c3-deployment/k8s/:/app/k8s/" -v "./lesson-7-Final-Project/udacity-c3-deployment/kube/:/app/kube/" -e AWS_ACCESS_KEY_ID=${ENV_AWS_TRAVIS_ACCESS_KEY} -e AWS_SECRET_ACCESS_KEY=${ENV_AWS_TRAVIS_SECRET_ACCESS_KEY} -e AWS_PROFILE="default" marcecardozo/kubectl-eks kubectl --kubeconfig /app/kube/kubeconfig.yaml apply -f /app/k8s/
+
+
+
