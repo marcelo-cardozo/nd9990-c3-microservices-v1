@@ -34,7 +34,5 @@ install:
   - sed -i -e 's|ENV_CLUSTER_NAME|'"${ENV_CLUSTER_NAME}"'|g' lesson-7-Final-Project/udacity-c3-deployment/kube/kubeconfig.yaml
   - sed -i -e 's|ENV_CLUSTER_REGION|'"${ENV_CLUSTER_REGION}"'|g' lesson-7-Final-Project/udacity-c3-deployment/kube/kubeconfig.yaml
 
-  - docker run -v "./lesson-7-Final-Project/udacity-c3-deployment/k8s/:/app/k8s/" -v "./lesson-7-Final-Project/udacity-c3-deployment/kube/:/app/kube/" -e AWS_ACCESS_KEY_ID=${ENV_AWS_TRAVIS_ACCESS_KEY} -e AWS_SECRET_ACCESS_KEY=${ENV_AWS_TRAVIS_SECRET_ACCESS_KEY} -e AWS_PROFILE="default" marcecardozo/kubectl-eks kubectl --kubeconfig /app/kube/kubeconfig.yaml apply -f /app/k8s/
-
-
+  - docker run -v "$(pwd)/lesson-7-Final-Project/udacity-c3-deployment/k8s/:/app/k8s/" -v "$(pwd)/lesson-7-Final-Project/udacity-c3-deployment/kube/:/app/kube/" -e AWS_ACCESS_KEY_ID=${ENV_AWS_TRAVIS_ACCESS_KEY} -e AWS_SECRET_ACCESS_KEY=${ENV_AWS_TRAVIS_SECRET_ACCESS_KEY} -e AWS_PROFILE="default" marcecardozo/kubectl-eks kubectl --kubeconfig=/app/kube/kubeconfig.yaml apply -f /app/k8s/
 
